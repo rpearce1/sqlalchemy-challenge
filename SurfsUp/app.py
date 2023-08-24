@@ -81,7 +81,8 @@ def tobs():
     # Calculate the date one year from the last date in data set.
     query_date = dt.datetime(2017,8,23) - dt.timedelta(days=365)
     session = Session(engine)
-    tobs_query = session.query(Measurement.tobs).filter((Measurement.station == 'USC00519281') & (Measurement.date > query_date)).all()
+    tobs_query = session.query(Measurement.tobs).\
+        filter((Measurement.station == 'USC00519281') & (Measurement.date > query_date)).all()
     session.close()
     tobs_list = [tobs.tobs for tobs in tobs_query]
     return(jsonify(tobs_list))
@@ -91,7 +92,8 @@ def tobs():
 def temp_summary_start(start):
     query_date = datetime.strptime(start,'%Y-%m-%d').date()
     session = Session(engine)
-    query = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter(Measurement.date >= query_date).all()
+    query = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).\
+        filter(Measurement.date >= query_date).all()
     session.close()
     stats = {'TMIN':query[0][0],'TMAX':query[0][1],'TAVG':query[0][2]}
     return(jsonify(stats))
@@ -102,7 +104,8 @@ def temp_summary_start_end(start,end):
     start_date = datetime.strptime(start,'%Y-%m-%d').date()
     end_date = datetime.strptime(end,'%Y-%m-%d').date()
     session = Session(engine)
-    query = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter((Measurement.date >= start_date) & (Measurement.date <= end_date)).all()
+    query = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).\
+        filter((Measurement.date >= start_date) & (Measurement.date <= end_date)).all()
     session.close()
     stats = {'TMIN':query[0][0],'TMAX':query[0][1],'TAVG':query[0][2]}
     return(jsonify(stats))
